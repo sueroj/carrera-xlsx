@@ -1,0 +1,10 @@
+horses:
+  name: Test Horse
+  age: 9
+  owner: Test Owner
+  trainer: Test Trainer
+  earning: 120000
+  results:
+    date: 20240222
+    location: BELM
+    jockey: 

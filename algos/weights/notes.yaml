@@ -1,0 +1,10 @@
+# Notes are weighted enums for the app algorithms
+
+form:
+  peak: 100
+  great: 80
+  good: 60
+  okay: 50
+  not_good: 40
+  bad: 20
+  terrible: 0
