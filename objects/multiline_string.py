@@ -7,6 +7,15 @@ class MultilineString:
         self._line = line
         self._parse_entries()
         self._format()
+
+    def to_string(self):
+        return self._line
+        # _dict = vars(self)
+
+        # string = ''
+        # for key, value in _dict.items():
+        #     string += f'{key}={value} '
+        # return string
     
     def _parse_entries(self):
         entries = self._line.split(',')

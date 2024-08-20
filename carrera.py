@@ -70,6 +70,9 @@ class CarreraXlsx:
    def update(self):
       self.xlsx_reader.import_data()
       self.xlsx_reader.update_data()
+
+      xlsx_writer = XlsxWriter(version=__version__)
+      xlsx_writer.write_data(data=self.xlsx_reader.data)
       
    def validate(self):
       XlsxValidate(self.xlsx_reader.data)

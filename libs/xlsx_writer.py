@@ -1,5 +1,6 @@
 import xlsxwriter
 from libs.xlsx_format import XlsxFormat
+from libs.constants import MULTILINE_STRING_KEYS
 
 # TODO: Add auto format of row length
 class XlsxWriter:
@@ -67,15 +68,47 @@ class XlsxWriter:
 
 
 
-    def update_data(self):
+    def write_data(self, data: dict):
 
-        self.write_update(path='data/locations/tracks.xlsx', data=self.data['tracks'])
+        # TODO: Would be wise to backup data in folder called backups before updating in case of error
+
+        self.write_update(path='data/locations/tracks.xlsx', data=data['tracks'])
+        self.write_update(path='data/profiles/horses_t.xlsx', data=data['horses'])
+        self.write_update(path='data/profiles/trainers_t.xlsx', data=data['trainers'])
+        self.write_update(path='data/profiles/owners_t.xlsx', data=data['owners'])
+        self.write_update(path='data/profiles/jockeys_t.xlsx', data=data['jockeys'])
 
     def write_update(self, path: str, data: list):
         self.xlsx = xlsxwriter.Workbook(path)
         self.format: XlsxFormat = XlsxFormat(self.xlsx)
+        worksheet = self.xlsx.add_worksheet()
 
-        ref_data = data[0].__dict__()
-        for key in ref_data.keys():
-            pass
+        ref_data = vars(data[0])
+
+        # Write headers from list of keys
+        worksheet.write_row(row=0, col=0, data=ref_data.keys())
+
+        # Write entries from list of values
+        for index, entry in enumerate(data):
+            entry_as_dict = vars(entry)
+            formatted = self.pack_multiline_string(entry_as_dict)
+            worksheet.write_row(col=0, row=index+1, data=formatted.values())
+        
         self.xlsx.close()
+        print(f'[XlsxWriter:INFO] write {path} OK')
+
+    def pack_multiline_string(self, entry: dict):
+
+        for key, value in entry.items():
+            if key in MULTILINE_STRING_KEYS:
+                string = ''
+                for mls in value:
+                    string += f'{mls.to_string()};'
+                entry[key] = string
+        return entry
+        # string = ''
+        # for key, value in entry.items():
+        #     if key in MULTILINE_STRING_KEYS:
+        #         for mls_key, mls_value in value:
+        #             string += f'{mls_key}={mls_value} '
+        # return string

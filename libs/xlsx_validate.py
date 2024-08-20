@@ -1,4 +1,4 @@
-
+from libs.constants import MULTILINE_STRING_KEYS
 
 
 
@@ -39,27 +39,30 @@ class XlsxValidate:
                 print(f'[XlsxValidate:WARNING] {prop} "{string}" not found in /data .xlsx')
 
     def check_results(self, data_key: str, prop: str):
-        # Create list of result values to check
-        properties = []
-        for obj in self.data[data_key]: 
-            for attr in ['results', 'scratches', 'workouts']:
-                item_list = getattr(obj, attr)
-                for item in item_list:
-                    value = getattr(item, prop)
-                    if value not in properties:
-                        properties.append(value)
+        # # Create list of result values to check
+        # properties = []
+        # for obj in self.data[data_key]: 
+        #     for key in MULTILINE_STRING_KEYS:
+        #         item_list = getattr(obj, key)
+        #         if len(item_list) > 0:
+        #             for item in item_list:
+        #                 value = getattr(item, prop)
+        #                 if value not in properties:
+        #                     properties.append(value)
 
-        # Check against loaded properties (read from /data .xlsx)
-        try:
-            loaded_props = []
-            for obj in self.data[f'{prop}s']:
-                loaded_props.append(obj.name)
-        except Exception as err:
-            raise LookupError(f'[XlsxValidate:ERROR] No data named {prop}s was loaded from .xlsx, ensure data .xlsx exists with at least one entry')
+        # # Check against loaded properties (read from /data .xlsx)
+        # try:
+        #     loaded_props = []
+        #     for obj in self.data[f'{prop}s']:
+        #         loaded_props.append(obj.name)
+        # except Exception as err:
+        #     raise LookupError(f'[XlsxValidate:ERROR] No data named {prop}s was loaded from .xlsx, ensure data .xlsx exists with at least one entry')
 
-        for string in properties:
-            if string not in loaded_props:
-                print(f'[XlsxValidate:WARNING] {prop} "{string}" not found in {prop}s.xlsx')
+        # for string in properties:
+        #     if string not in loaded_props:
+        #         print(f'[XlsxValidate:WARNING] {prop} "{string}" not found in {prop}s.xlsx')
+        # TODO: Restore this check when results are more implemented in final format
+        pass
 
     def check_notes(self):
         """Check and validate notes which are basically weighted enums (i.e. algorithm params) for the app"""
