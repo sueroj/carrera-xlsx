@@ -1,10 +1,79 @@
-horses:
+0:
   name: Test Horse
   age: 9
   owner: Test Owner
   trainer: Test Trainer
-  earning: 120000
+  earnings: 120000
   results:
-    date: 20240222
-    location: BELM
-    jockey: 
+    0:
+      date: 2024022
+      track: BELM
+      jockey: Tim Palmer
+      place: 3
+      distance: 8.2
+      finish_time: 120.5
+      avg_speed: 3.1
+      form_note: good
+    1:
+      date: 2024022
+      track: SART
+      jockey: James Jones
+      place: 2
+      distance: 7.2
+      finish_time: 112.5
+      avg_speed: 4.2
+      form_note: good
+  scratches:
+    0:
+      date: 20240218
+      track: BELM
+      jockey: Tim Palmer
+  workouts:
+    0:
+      date: 20240215
+      track: BELM
+      jockey: Tim Palmer
+      distance: 8.2
+      finish_time: 120.5
+      avg_speed: 3.1
+      form_note: good
+
+1:
+  name: The Senator
+  age: 5
+  owner: Owner Two
+  trainer: Trainer Two
+  earnings: 15800
+  results:
+    0:
+      date: 2024022
+      track: BELM
+      jockey: Tim Palmer
+      place: 3
+      distance: 8.2
+      finish_time: 120.5
+      avg_speed: 3.1
+      form_note: good
+    1:
+      date: 2024022
+      track: SART
+      jockey: James Jones
+      place: 2
+      distance: 7.2
+      finish_time: 112.5
+      avg_speed: 4.2
+      form_note: good
+  scratches:
+    0:
+      date: 20240218
+      track: BELM
+      jockey: Tim Palmer
+  workouts:
+    0:
+      date: 20240215
+      track: BELM
+      jockey: Tim Palmer
+      distance: 8.2
+      finish_time: 120.5
+      avg_speed: 3.1
+      form_note: good

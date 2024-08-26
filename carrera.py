@@ -9,6 +9,7 @@ from libs.xlsx_validate import XlsxValidate
     - Algo bet predictions based on the UPCOMING EVENTS page
     - Shows odds, win/loss % predication
     - Show predictations for event for all algos simultaneously
+    - For Horse Betting, Super pick 4/5/6, etc should be goal
  
  EVENTS
     - Lists upcoming events which algos will run against

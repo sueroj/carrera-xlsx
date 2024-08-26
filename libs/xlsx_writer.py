@@ -1,4 +1,6 @@
 import xlsxwriter
+import yaml
+
 from libs.xlsx_format import XlsxFormat
 from libs.constants import MULTILINE_STRING_KEYS
 
@@ -66,13 +68,11 @@ class XlsxWriter:
     def write_header(self, worksheet):
         worksheet.merge_range(f'A1:S1', f'Carrera XLSX v{self.version}', self.format.header)
 
-
-
     def write_data(self, data: dict):
 
         # TODO: Would be wise to backup data in folder called backups before updating in case of error
 
-        self.write_update(path='data/locations/tracks.xlsx', data=data['tracks'])
+        self.write_update(path='data/locations/tracks_t.xlsx', data=data['tracks'])
         self.write_update(path='data/profiles/horses_t.xlsx', data=data['horses'])
         self.write_update(path='data/profiles/trainers_t.xlsx', data=data['trainers'])
         self.write_update(path='data/profiles/owners_t.xlsx', data=data['owners'])
@@ -95,9 +95,49 @@ class XlsxWriter:
             worksheet.write_row(col=0, row=index+1, data=formatted.values())
         
         self.xlsx.close()
+
+    # def write_data(self, data: dict):
+
+    #     # TODO: Would be wise to backup data in folder called backups before updating in case of error
+
+    #     self.write_update(path='data/locations/tracks_t.yaml', data=data['tracks'])
+    #     self.write_update(path='data/profiles/horses_t.yaml', data=data['horses'])
+    #     self.write_update(path='data/profiles/trainers_t.yaml', data=data['trainers'])
+    #     self.write_update(path='data/profiles/owners_t.yaml', data=data['owners'])
+    #     self.write_update(path='data/profiles/jockeys_t.yaml', data=data['jockeys'])
+
+    
+    # def write_update(self, path: str, data: list):
+
+    #     with open(path, 'w') as yaml_file:
+    #         yaml.dump(data, yaml_file)
+    #         yaml_file.close()
+
+    #     print(f'[XlsxWriter:INFO] write {path} OK')
+
+    def write_update(self, path: str, data: list):
+        self.xlsx = xlsxwriter.Workbook(path)
+        self.format: XlsxFormat = XlsxFormat(self.xlsx)
+        worksheet = self.xlsx.add_worksheet()
+
+        ref_data = vars(data[0])
+
+        # Write headers from list of keys
+        worksheet.write_row(row=0, col=0, data=ref_data.keys())
+
+        # Write entries from list of values
+        for index, entry in enumerate(data):
+            entry_as_dict = vars(entry)
+            entry_as_dict = self._check_record_to_str(entry_as_dict)
+            formatted = self.pack_multiline_string(entry_as_dict)
+            worksheet.write_row(col=0, row=index+1, data=formatted.values())
+        
+        self.xlsx.close()
         print(f'[XlsxWriter:INFO] write {path} OK')
 
     def pack_multiline_string(self, entry: dict):
+
+        # TODO: Looks like this could be streamlined by checking multiline_string earlier
 
         for key, value in entry.items():
             if key in MULTILINE_STRING_KEYS:
@@ -106,9 +146,11 @@ class XlsxWriter:
                     string += f'{mls.to_string()};'
                 entry[key] = string
         return entry
-        # string = ''
-        # for key, value in entry.items():
-        #     if key in MULTILINE_STRING_KEYS:
-        #         for mls_key, mls_value in value:
-        #             string += f'{mls_key}={mls_value} '
-        # return string
+    
+    def _check_record_to_str(self, entry_as_dict: dict) -> str:
+        value = entry_as_dict.get('record', None)
+        if value:
+            entry_as_dict['record'] = str(value)
+        return entry_as_dict
+
+    

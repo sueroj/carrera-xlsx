@@ -29,81 +29,119 @@ class EquibaseTextParser(TextParser):
         self.parse()
 
     def parse(self):
-        # self.raw_data = ''.join([line for line in self.raw_data])
-        # self.raw_data = [line.strip('\n') for line in self.raw_data]
         self.parse_race_info()
         self.parse_horses()
-        return self
 
     def parse_horses(self):
         
-        # TODO: STOPPED HERE> USe python regex tool for this
-        # Split up horses in this race
-        match = re.findall(r'.+Owner:.+Trainer\s\(', self.raw_data, flags=re.DOTALL)
-        if match:
-            pass
+        # Split up horses in this race and parse each
+        text_list = self.raw_data.split('Owner: ')
+        horses_list = text_list[1::]
+        for horse_info in horses_list:
+            horse = Horse()
+            owner = Owner()
+            trainer = Trainer()
+            jockey = Jockey()
 
-        # horse = None
-
-        # for index, line in enumerate(self.raw_data):
-        #     if 'Owner: ' in line:
-        #         horse = Horse()
-        #         owner = Owner()
-        #         trainer = Trainer()
-        #         jockey = Jockey()
-        #         record = Record()
+            # Parse horse owner
+            lines = horse_info.split(':')
+            for line in lines:
+                if 'Silks' in line:
+                    horse.owner = re.sub(r'\s[\d|N][/\\\n\w]+Silks', '', line)
+                    owner.name = horse.owner
+            if not owner.name or 'Silks' in owner.name: # TODO: Move this to one centralized location for validation
+                print('[EquibaseTextParser:WARN] Fail to parse owner: {owner.name}')
             
-        #     if horse:
-        #         # Parse horse owner
-        #         match = re.search(r'Owner:.+\s', line)
-        #         if match:
-        #             horse.owner = match.group(0).replace('Owner: ', '').strip()
-        #             owner.name = horse.owner
+            # Split horse info into lines and continue parsing
+            lines = horse_info.split('\n')
+            for index, line in enumerate(lines):
                 
-        #         # Parse horse trainer
-        #         match = re.search(r'Trainer:.+\(', line)
-        #         if match:
-        #             horse.trainer = match.group(0).replace('Trainer: ', '').replace(' (', '')
-        #             trainer.name = horse.trainer
+                if 'Trainer:' in line:
 
-        #             match = re.search(r'\(.+\)', line)
-        #             if match:
-        #                 trainer.record = match.group(0).replace('(', '').replace(')', '').strip()
+                    # Parse horse trainer
+                    match = re.search(r'Trainer:.+\(', line)
+                    if match:
+                        horse.trainer = match.group(0).replace('Trainer: ', '').replace(' (', '')
+                        trainer.name = horse.trainer
 
-        #             match = re.search(r'%\s+.+', line)
-        #             if match:
-        #                 jockey.name = match.group(0).replace('% ', '')
-        #                 jockey_record = re.search(r'\(.+\)', self.raw_data[index+1])
-        #                 if jockey_record:
-        #                     jockey.record = jockey_record.group(0).replace('(', '').replace(')', '').strip()
+                        # Parse horse record
+                        match = re.search(r'\(.+\)', line)
+                        if match:
+                            trainer_record = match.group(0).strip('() ')
+                            trainer.record.new(trainer_record)
 
-        #         # Parse horse name
+                        # Parse jockey
+                        match = re.search(r'%\s+.+', line)
+                        if match:
+                            jockey.name = match.group(0).replace('% ', '')
+                            jockey_record = re.search(r'\(.+\)', lines[index+1]).group(0).strip('() ')
+                            jockey.record.new(jockey_record)
+            
+                if 'Life:' in line:
+                    split_line = line.split('$')
 
+                    # Parse horse life earnings
+                    line = split_line[1]
+                    horse.earnings = re.search(r'^[\d,]+', line).group(0).replace(',', '')
 
-        #         # TODO: STOPPED HERE - Continue with parsing the horse record from file. It is pretty tricky string to parse
-        #         # Parse horse record    
-        #         match = re.findall(r'^\w+:\s.+\$[\d,]+', line)
-        #         if match:
-        #             items = match[0].split('$')
+                    # Parse horse record
+                    line = split_line[0]
+                    matches = re.findall(r'\d+', line)
+                    if len(matches) == 5:
+                        horse.speed_rating = matches[4]
+                        horse.record.new_from_list(matches[0:4])
+                    elif len(matches) == 4:
+                        horse.record.new_from_list(matches)
+                    else:
+                        print(f'[EquibaseTextParser:WARN] Fail to parse horse record for horse: {horse.name}')
+                    
+                    # Update horse new runner status
+                    if horse.speed_rating == 'NA':
+                        horse.new_runner = True
 
-        #             year, record_string = items[0].split(':')
-        #             record_string = record_string.strip().split(' ')
-        #             record_string = ''.join(record_string[0:3])
-        #             cls = record_string[4]
-        #             record.add(label=year, string=record_string)
+                if 'GP:' in line:
 
+                    # Parse horse name, which is on line starting with 'GP:' or next line
+                    line = line.split('$')[2]
+                    match = re.search(r'[a-zA-Z\' ]+\s', line)
+                    if match:
+                        horse.name = match.group(0)[0:-1]
+                    else:  # If above fails, name could be on next line, try that
+                        line = lines[index+1]
+                        match = re.search(r'[a-zA-Z\' ]+\s', line)
+                        if match:
+                            horse.name = match.group(0)[0:-1]
 
-                            
-        #         # Parse horse results
-                            
-        #         # Parse horse workouts
+                    # Parse horse lasik state
+                    if '(L1)' in line or '(L)' in line:
+                        horse.lasik = True
 
-        #         # Match last line of information for a horse
-        #         # This indicates to save this horse and prepare for next
-        #         match = re.search(r'Trainer.+\(Last', line)
-        #         if match:
-        #             self.horses.append(horse)
-        #             horse = None
+                # if 'A ' in line:                # TODO: Temporary add results directly to list, need to add parsing
+                #     # Parse horse results
+                #     horse.results.append(line)
+                
+                # if 'Workout(s):' in line:       # TODO: Temporary add workouts directly to list, need to add parsing
+                #     # Parse horse workouts
+                #     line = line.replace('Workout(s): ', '')
+                #     horse.workouts.append(line)
+            
+            self.horses.append(horse)
+            self.owners.append(owner)
+            self.trainers.append(trainer)
+            self.jockeys.append(jockey)
+                    
+
+            # TODO: STOPPED HERE - Continue with parsing the horse record from file. It is pretty tricky string to parse
+            # Parse horse record    
+            # match = re.findall(r'^\w+:\s.+\$[\d,]+', line)
+            # if match:
+            #     items = match[0].split('$')
+
+            #     year, record_string = items[0].split(':')
+            #     record_string = record_string.strip().split(' ')
+            #     record_string = ''.join(record_string[0:3])
+            #     cls = record_string[4]
+            #     record.add(label=year, string=record_string)
 
 
     def parse_race_info(self):
@@ -151,5 +189,3 @@ class EquibaseTextParser(TextParser):
                 if match:
                     self.track_record = match.group(0).replace('; ', '').strip()
         print(f'[EquibaseTextParser:INFO] import {self.track} {self.race_name} from {TEXT_PARSER_FILENAME}')
-
-

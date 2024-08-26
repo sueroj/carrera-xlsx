@@ -1,0 +1,16 @@
+0:
+  name: Belmont
+  abbreviation: BELM
+  region: New York
+  types: turf, dirt
+  fastest_speed: 53.7
+  notes: ''
+  distances: ''
+1:
+  name: Saratoga
+  abbreviation: SART
+  region: New York
+  types: turf, dirt
+  fastest_speed: 51.7
+  notes: ''
+  distances: ''

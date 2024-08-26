@@ -1,0 +1,16 @@
+- !!python/object:objects.location.Track
+  abbreviation: BELM
+  distances: ''
+  fastest_speed: 53.7
+  name: Belmont
+  notes: ''
+  region: New York
+  types: turf, dirt
+- !!python/object:objects.location.Track
+  abbreviation: SART
+  distances: ''
+  fastest_speed: 51.7
+  name: Saratoga
+  notes: ''
+  region: New York
+  types: turf, dirt

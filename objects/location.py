@@ -8,7 +8,7 @@ class Location:
         self.abbreviation: str = ''
         self.region: str = ''
         self.types: str = ''
-        self.fastest_speed: int = 0
+        self.record_speed: str = ''
         self.notes: str = ''
 
     def unpack(self, props: tuple, data: tuple):
@@ -16,6 +16,11 @@ class Location:
         zipped_data = zip(props, data)
         for prop, value in zipped_data:
             setattr(self, prop, value)
+        return self
+    
+    def unpack_from_yaml(self, yaml_dict: dict):
+        for key, val in yaml_dict.items():
+            setattr(self, key, val)
         return self
 
     def load_props(self, props: tuple):
@@ -28,3 +33,5 @@ class Location:
 class Track(Location):
     def __init__(self):
         super().__init__()
+        self.record_holder: str = ''
+        self.record_weight: str = ''

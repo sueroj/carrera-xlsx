@@ -1,0 +1,58 @@
+--- Sorted by importance ---
+
+Lasik - (write-off compared to others)
+Blinker - (can be write-off, esp. if recent changed)
+Speed Rating - (2digit, In bold under results)
+Earnings Overall Lifetime - 
+Class - 
+Jockey Record - 
+Trainer Record - 
+Earnings on Surface -
+Weather performance - (Shows under results, comp to current race condition) 
+Workouts - 
+Owner Record -
+Region Trend - Britain/Ireland/France = good grass
+
+Trends/Notes - Strong from back = good grass +1
+		- Heavy weight = good in wet +1
+	     	- Record shows improving = +1
+		- Early speed / quick start (by parsing fractions/places in 		  results) +3
+
+--- Ranked ---
+
+Lasik - 10/10
+Blinker - 10/10
+Speed Rating - 10/10
+Earning Lifetime - 5/10
+Earning on Surface - 5/10
+Class - 8/10
+Jockey Record - 5/10
+Trainer Record - 10/10
+Weather Performance - 8/10
+Workouts - 8/10
+Owner Record - 2/10
+Region - 8/10
+Trends/Note - 9/10
+
+--- Weights ---
+
+Lasik - .10
+Blinker - .10
+Speed Rating - .10 
+Earning Lifetime - .05
+Earning on Surface - .05
+Class - .08
+Jockey Record - .05
+Trainer Record - .10
+Weather Performance - .08
+Workouts - .08
+Owner Record - .02
+Region - .08
+Trends/Note - .09
+
+
+--- General Sport Betting Notes---
+
+Injuries are max weight mods, big impact
+
+

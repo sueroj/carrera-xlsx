@@ -1,0 +1,8 @@
+- !!python/object:objects.profile.Profile
+  age: ''
+  name: Test Owner
+  record: ''
+- !!python/object:objects.profile.Profile
+  age: ''
+  name: Test Owner Two
+  record: ''
